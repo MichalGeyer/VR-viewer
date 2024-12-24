@@ -1,0 +1,26 @@
+<html lang="en"><head>
+    <title>360 stereo video</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link type="text/css" rel="stylesheet" href="css/main.css">
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/"
+          }
+        }
+          </script>
+  </head>
+  
+  <body>
+    <div id="container"><canvas data-engine="three.js r166" width="1914" height="1714" style="display: block; width: 957px; height: 857px;"></canvas></div>
+    <video id="video" loop="" muted="" crossorigin="anonymous" playsinline="" style="display:none">
+      <!-- <source src="textures/astronaut.webm" type="video/webm"> -->
+      <source src="example.mp4" type="video/mp4">
+    </video>
+    <script type="module" src="stereo.js?ver=23"></script>
+  
+  
+  
+  <button id="VRButton" style="position: absolute; bottom: 20px; padding: 12px 6px; border: 1px solid rgb(255, 255, 255); border-radius: 4px; background: rgba(0, 0, 0, 0.1); color: rgb(255, 255, 255); font: 13px sans-serif; text-align: center; opacity: 0.5; outline: none; z-index: 999; cursor: auto; left: calc(50% - 75px); width: 150px;">VR NOT SUPPORTED</button></body></html>
