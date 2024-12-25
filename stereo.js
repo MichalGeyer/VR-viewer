@@ -1,103 +1,129 @@
 import * as THREE from 'three';
-import {VRButton} from 'three/addons/webxr/VRButton.js';
+import { VRButton } from 'three/addons/webxr/VRButton.js';
 
 let camera, scene, renderer, mesh1, mesh2;
 
 init();
 
-// Initializes the scene, camera, renderer, controls, and XR button.
 function init() {
   const container = document.getElementById('container');
+
+  // Ensure the video starts on a click/tap (mobile browsers often require user interaction)
   container.addEventListener('click', function() {
     video.play();
   });
 
-  camera = new THREE.PerspectiveCamera(
-      70, window.innerWidth / window.innerHeight, 1, 2000);
-
-  // Renders left view when no stereo available.
-  camera.layers.enable(1);
-
+  // Grab the video element
   const video = document.getElementById('video');
   video.play();
 
+  // Create a video texture
   const texture = new THREE.VideoTexture(video);
   texture.colorSpace = THREE.SRGBColorSpace;
 
+  // Create a scene
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x101010);
 
-  // Left eye.
-  const geometry1 = new THREE.PlaneGeometry(
-      1, 1, 1, 1);  // Width is 1.8 times the height to match aspect ratio
+  // --- Camera (force aspect = 1) ---
+  camera = new THREE.PerspectiveCamera(70, 1.0, 1, 2000);
+  // Renders left view when no stereo available
+  camera.layers.enable(1);
 
-  // Adjust UVs for the left half of the video.
+  // --- Left-eye quad (1:1 geometry) ---
+  // If your stereo video is side-by-side, each half is effectively 1:1.
+  // PlaneGeometry(width, height). We’ll use 1×1.
+  const geometry1 = new THREE.PlaneGeometry(1, 1);
+
+  // Adjust the UVs so that this mesh only displays the *left* half of the video (0.0 → 0.5).
   const uvs1 = geometry1.attributes.uv.array;
   for (let i = 0; i < uvs1.length; i += 2) {
-    uvs1[i] *= 0.5;
+    // u coords
+    uvs1[i] *= 0.5; // 0 → 0.5
   }
 
-  const material1 =
-      new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide});
+  const material1 = new THREE.MeshBasicMaterial({
+    map: texture,
+    side: THREE.DoubleSide,
+  });
 
   mesh1 = new THREE.Mesh(geometry1, material1);
-  mesh1.layers.set(1);  // Display in left eye only
+  // Left eye only
+  mesh1.layers.set(1);
   scene.add(mesh1);
 
-  // Right eye.
-  const geometry2 = new THREE.PlaneGeometry(
-      1, 1, 1, 1);  // Width is 1.8 times the height to match aspect ratio
+  // --- Right-eye quad (1:1 geometry) ---
+  const geometry2 = new THREE.PlaneGeometry(1, 1);
 
-  // Adjust UVs for the right half of the video.
+  // Adjust the UVs so that this mesh only displays the *right* half of the video (0.5 → 1.0).
   const uvs2 = geometry2.attributes.uv.array;
   for (let i = 0; i < uvs2.length; i += 2) {
-    uvs2[i] *= 0.5;
-    uvs2[i] += 0.5;
+    // u coords
+    uvs2[i] *= 0.5;   // 0 → 0.5
+    uvs2[i] += 0.5;   // shift → 0.5 → 1.0
   }
 
-  const material2 =
-      new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide});
+  const material2 = new THREE.MeshBasicMaterial({
+    map: texture,
+    side: THREE.DoubleSide,
+  });
 
   mesh2 = new THREE.Mesh(geometry2, material2);
-  mesh2.layers.set(2);  // Display in right eye only
+  // Right eye only
+  mesh2.layers.set(2);
   scene.add(mesh2);
 
-  // Sets up renderer.
-  renderer = new THREE.WebGLRenderer();
+  // --- Renderer ---
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  // If you really want 1:1 exact pixel size (no retina scaling), remove or change this line:
   renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setAnimationLoop(animate);
+
+  // For initial load, pick the smaller of the window’s width/height so it’s square
+  const size = Math.min(window.innerWidth, window.innerHeight);
+  renderer.setSize(size, size);
+
+  // Enable WebXR
   renderer.xr.enabled = true;
   renderer.xr.setReferenceSpaceType('local');
+
+  // Attach the canvas to #container
   container.appendChild(renderer.domElement);
 
+  // Create/append the VR button
   document.body.appendChild(VRButton.createButton(renderer));
+
+  // Listen for window resizing
   window.addEventListener('resize', onWindowResize);
+
+  // Animation loop
+  renderer.setAnimationLoop(animate);
 }
 
 function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
+  // Force a square viewport on resize
+  const size = Math.min(window.innerWidth, window.innerHeight);
+  renderer.setSize(size, size);
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  // Force camera’s aspect ratio to 1
+  camera.aspect = 1;
+  camera.updateProjectionMatrix();
 }
 
 function animate() {
-  // Update the positions of the quads to be 3 meters in front of the camera
+  // Position both quads ~3 meters in front of camera, facing the camera
   const cameraDirection = new THREE.Vector3();
   camera.getWorldDirection(cameraDirection);
 
-  const frontPosition =
-      camera.position.clone().add(cameraDirection.clone().multiplyScalar(3));
+  const frontPosition = camera.position
+    .clone()
+    .add(cameraDirection.clone().multiplyScalar(3));
 
   mesh1.position.copy(frontPosition);
-  // mesh1.position.x -= 0.9;  // Slight offset to the left for the left eye
-  mesh1.quaternion.copy(camera.quaternion);  // Make the quad face the camera
+  mesh1.quaternion.copy(camera.quaternion); // Face the camera
 
   mesh2.position.copy(frontPosition);
-  mesh2.quaternion.copy(camera.quaternion);  // Make the quad face the camera
+  mesh2.quaternion.copy(camera.quaternion); // Face the camera
 
-  // mesh2.position.x += 0.9;  // Slight offset to the right for the right eye
-
+  // Render the scene
   renderer.render(scene, camera);
 }
