@@ -3,17 +3,76 @@
 <head>
   <meta charset="UTF-8" />
   <title>3D Viewer</title>
-  <!-- Link to your main CSS file -->
-  <link rel="stylesheet" href="css/main.css" />
+  
+  <!-- Link to your external CSS file if desired -->
+  <!-- <link rel="stylesheet" href="css/main.css" /> -->
+
+  <style>
+    /* Basic reset or box-sizing if desired */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Center everything on the page */
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: sans-serif;
+      min-height: 100vh;
+      background-color: #f5f5f5;
+    }
+
+    /* Heading styling */
+    h1 {
+      margin: 20px 0;
+    }
+
+    /* Thumbnails container */
+    .thumbnails {
+      display: flex;
+      gap: 20px; /* space between each thumbnail */
+    }
+
+    /* Individual thumbnail link */
+    .thumbnail {
+      text-align: center;
+      text-decoration: none;
+      color: #333;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 8px;
+      transition: box-shadow 0.3s ease;
+    }
+    .thumbnail:hover {
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    /* Image styling: make smaller, keep aspect ratio, center in container */
+    .thumbnail img {
+      width: 150px;  /* Adjust size as needed */
+      height: auto;  /* Maintain aspect ratio */
+      display: block;
+      margin: 0 auto 10px auto; /* centers image and adds space at bottom */
+    }
+
+    /* Caption styling (the <p> under each thumbnail) */
+    .thumbnail p {
+      margin-top: 5px;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
 
   <h1>3D Viewer</h1>
-
-  <!-- Thumbnail section -->
+  
   <div class="thumbnails">
-    <!-- Example 1 thumbnail -->
-    <a href="example/index.html">
+    <a class="thumbnail" href="example_1/index.html">
       <img src="images/example.png" alt="Example 1 Thumbnail" />
       <p>Example 1</p>
     </a>
