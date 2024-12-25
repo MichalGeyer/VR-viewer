@@ -29,7 +29,7 @@ function init() {
 
   // Left eye.
   const geometry1 = new THREE.PlaneGeometry(
-      1.8, 1, 1, 1);  // Width is 1.8 times the height to match aspect ratio
+      1, 1, 1, 1);  // Width is 1.8 times the height to match aspect ratio
 
   // Adjust UVs for the left half of the video.
   const uvs1 = geometry1.attributes.uv.array;
@@ -46,7 +46,7 @@ function init() {
 
   // Right eye.
   const geometry2 = new THREE.PlaneGeometry(
-      1.8, 1, 1, 1);  // Width is 1.8 times the height to match aspect ratio
+      1, 1, 1, 1);  // Width is 1.8 times the height to match aspect ratio
 
   // Adjust UVs for the right half of the video.
   const uvs2 = geometry2.attributes.uv.array;
