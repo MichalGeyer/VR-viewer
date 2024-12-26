@@ -3,7 +3,7 @@ import shutil
 
 STEREO_JS_SOURCE='example/stereo.js'
 SAVE_PATH = 'viewers'
-PAIRS_USER_STUDY_PATH = "pairs-user-study"  # Relative path used inside <source>
+PAIRS_USER_STUDY_PATH = "../pairs-user-study"  # Relative path used inside <source>
 
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
