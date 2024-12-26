@@ -28,7 +28,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </div>
     
     <video id="video" loop muted crossorigin="anonymous" playsinline style="display:none">
-      <!-- <source src="{commented_path}" type="video/mp4"> -->
+      <source src="{commented_path}" type="video/mp4">
       <source src="{actual_path}" type="video/mp4">
     </video>
     
